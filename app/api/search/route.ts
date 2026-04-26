@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const interpretation = await interpretQuery(query);
-    const results = filterAndRankPlaces(interpretation);
+    const results = await filterAndRankPlaces(interpretation);
 
     const response: SearchResponse = {
       results,
