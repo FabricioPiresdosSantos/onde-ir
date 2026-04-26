@@ -2,10 +2,18 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 import PlaceCard from "@/components/PlaceCard";
 import SearchBar from "@/components/SearchBar";
 import Link from "next/link";
 import type { RankedPlace } from "@/lib/places";
+
+const MapView = dynamic(() => import("@/components/MapView"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[300px] w-full bg-[#161B22] border border-[#30363D] rounded-2xl mb-6 animate-pulse-subtle" />
+  ),
+});
 
 interface SearchResponse {
   results: RankedPlace[];
@@ -238,16 +246,19 @@ function ResultsContent() {
             {data.results.length === 0 ? (
               <EmptyState query={query} />
             ) : (
-              <div className="space-y-4">
-                {data.results.map((place, i) => (
-                  <PlaceCard
-                    key={place.id}
-                    place={place}
-                    maxScore={maxScore}
-                    index={i}
-                  />
-                ))}
-              </div>
+              <>
+                <MapView places={data.results} />
+                <div className="space-y-4">
+                  {data.results.map((place, i) => (
+                    <PlaceCard
+                      key={place.id}
+                      place={place}
+                      maxScore={maxScore}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </>
         )}

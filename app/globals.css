@@ -59,3 +59,44 @@ body {
 .animate-pulse-subtle {
   animation: pulse-subtle 1.5s ease-in-out infinite;
 }
+
+/* ── Mapbox popup — tema escuro ──────────────────────────── */
+.onde-ir-popup .mapboxgl-popup-content {
+  background-color: #161B22 !important;
+  border: 1px solid #30363D !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  color: #E6EDF3 !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  font-family: inherit !important;
+}
+
+.onde-ir-popup .mapboxgl-popup-tip {
+  border-top-color: #30363D !important;
+}
+
+/* Esconde o close button padrão (usamos o nosso) */
+.onde-ir-popup .mapboxgl-popup-close-button {
+  display: none !important;
+}
+
+/* Controles de navegação */
+.mapboxgl-ctrl-group {
+  background-color: #161B22 !important;
+  border: 1px solid #30363D !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-ctrl-group button {
+  background-color: transparent !important;
+  border-bottom: 1px solid #30363D !important;
+}
+
+.mapboxgl-ctrl-group button:last-child {
+  border-bottom: none !important;
+}
+
+.mapboxgl-ctrl-icon {
+  filter: invert(1) !important;
+}
