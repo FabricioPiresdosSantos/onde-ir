@@ -86,7 +86,7 @@ async function main() {
   const neighborhoodMap = new Map<string, string>(); // id → bairro
   let geocoded = 0;
 
-  for (const [key, cell] of cells) {
+  for (const [key, cell] of Array.from(cells)) {
     const neighborhood = await reverseGeocode(cell.lat, cell.lng);
     geocoded++;
     process.stdout.write(`   Geocodificando: ${geocoded}/${cells.size} — ${neighborhood || "(sem bairro)"}\r`);
@@ -105,7 +105,7 @@ async function main() {
 
   // Agrupa por bairro para atualizar em lote
   const byNeighborhood = new Map<string, string[]>();
-  for (const [id, neighborhood] of neighborhoodMap) {
+  for (const [id, neighborhood] of Array.from(neighborhoodMap)) {
     if (!byNeighborhood.has(neighborhood)) byNeighborhood.set(neighborhood, []);
     byNeighborhood.get(neighborhood)!.push(id);
   }
@@ -113,7 +113,7 @@ async function main() {
   console.log("💾  Atualizando Supabase...");
   let updated = 0;
 
-  for (const [neighborhood, ids] of byNeighborhood) {
+  for (const [neighborhood, ids] of Array.from(byNeighborhood)) {
     const { error: updateError } = await supabase
       .from("places")
       .update({ neighborhood })
