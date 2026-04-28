@@ -108,7 +108,8 @@ export async function filterAndRankPlaces(
       if (attrLower.includes("pet") && place.attributes.petFriendly) score += 8;
     }
 
-    score += place.rating * 2;
+    // rating só entra como desempate quando há pelo menos um match real
+    if (score > 0) score += place.rating * 2;
 
     return { ...place, score };
   });
