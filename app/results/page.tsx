@@ -160,6 +160,15 @@ function ResultsContent() {
   const [data, setData] = useState<SearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {} // silencioso — localização é opcional
+    );
+  }, []);
 
   useEffect(() => {
     if (!query || query.length < 2) return;
@@ -171,7 +180,7 @@ function ResultsContent() {
     fetch("/api/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, ...userLocation }),
     })
       .then((r) => {
         if (!r.ok) return r.json().then((e) => Promise.reject(e.error ?? "Erro desconhecido"));
@@ -180,7 +189,7 @@ function ResultsContent() {
       .then((json: SearchResponse) => setData(json))
       .catch((msg: string) => setError(typeof msg === "string" ? msg : "Erro ao buscar. Tente novamente."))
       .finally(() => setLoading(false));
-  }, [query]);
+  }, [query, userLocation]);
 
   const handleReSearch = (newQuery: string) => {
     router.push(`/results?q=${encodeURIComponent(newQuery)}`);

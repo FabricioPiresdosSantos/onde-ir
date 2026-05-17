@@ -18,6 +18,15 @@ function PriceRange({ range }: { range: 1 | 2 | 3 | 4 }) {
   );
 }
 
+function DistanceLabel({ meters }: { meters: number }) {
+  const label = meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1)} km`;
+  return (
+    <span className="text-xs bg-[#21262D] text-[#8B949E] px-2 py-0.5 rounded-full">
+      📡 {label}
+    </span>
+  );
+}
+
 function AmbienteLabel({ ambiente }: { ambiente?: "agitado" | "tranquilo" | "moderado" }) {
   if (!ambiente) return null;
   const map = {
@@ -85,6 +94,7 @@ export default function PlaceCard({ place, maxScore, index }: PlaceCardProps) {
               <span className="text-xs text-[#8B949E]">
                 📍 {place.neighborhood}
               </span>
+              {place.distance != null && <DistanceLabel meters={place.distance} />}
             </div>
           </div>
 

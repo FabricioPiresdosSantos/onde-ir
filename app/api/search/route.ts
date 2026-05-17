@@ -16,10 +16,16 @@ interface SearchResponse {
 
 export async function POST(request: NextRequest) {
   let query: string;
+  let userLat: number | undefined;
+  let userLng: number | undefined;
 
   try {
     const body = await request.json();
     query = body.query?.trim();
+    if (typeof body.lat === "number" && typeof body.lng === "number") {
+      userLat = body.lat;
+      userLng = body.lng;
+    }
   } catch {
     return NextResponse.json({ error: "Corpo da requisição inválido" }, { status: 400 });
   }
@@ -35,7 +41,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Busca muito longa" }, { status: 400 });
   }
 
-  const cacheKey = buildCacheKey(query);
+  // Arredonda para ~1 km para aproveitar cache sem ser muito impreciso
+  const locationSuffix =
+    userLat != null && userLng != null
+      ? `:${userLat.toFixed(2)},${userLng.toFixed(2)}`
+      : "";
+  const cacheKey = buildCacheKey(query) + locationSuffix;
   const cached = await getCached<SearchResponse>(cacheKey);
   if (cached) {
     return NextResponse.json({ ...cached, cached: true });
@@ -43,7 +54,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const interpretation = await interpretQuery(query);
-    const results = await filterAndRankPlaces(interpretation);
+    const results = await filterAndRankPlaces(interpretation, userLat, userLng);
 
     const response: SearchResponse = {
       results,
